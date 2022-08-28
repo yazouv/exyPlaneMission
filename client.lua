@@ -33,12 +33,45 @@ DeleteVehicle = function(vehicle)
     DeletePed(ped5)
 end
 
-StartBliper = function()
+StartBliper = function(Veh)
+    local model = GetHashKey(Veh)
+    RequestModel(model)
+    while not HasModelLoaded(model) do Wait(0) end
+    vehicle = CreateVehicle(model, Config.SpawnPoint.x, Config.SpawnPoint.y, Config.SpawnPoint.z, Config.SpawnPoint.h,
+        true, false)
+    TaskEnterVehicle(GetPlayerPed(-1), vehicle, 20000, -1, 1.0, 3, 0)
+    SetVehicleDirtLevel(vehicle, 0.0)
+    FreezeEntityPosition(vehicle, true)
+    ShowNotification("<C>Attendez que tout les passagers embarquent")
+    Wait(4000)
+    RequestModel(GetHashKey("s_m_y_dealer_01"))
+    while (not HasModelLoaded(GetHashKey("s_m_y_dealer_01"))) do
+        Citizen.Wait(1)
+    end
+    ped = CreatePed(4, 0xE497BBEF, -987.18878173828, -3005.7377929688, 13.945065498352, 330.73, true)
+    ped2 = CreatePed(4, 0xE497BBEF, -987.18878173828, -3005.7377929688, 13.945065498352, 330.73, true)
+    ped3 = CreatePed(4, 0xE497BBEF, -987.18878173828, -3005.7377929688, 13.945065498352, 330.73, true)
+    ped4 = CreatePed(4, 0xE497BBEF, -987.18878173828, -3005.7377929688, 13.945065498352, 330.73, true)
+    ped5 = CreatePed(4, 0xE497BBEF, -987.18878173828, -3005.7377929688, 13.945065498352, 330.73, true)
+    Wait(4000)
+    TaskEnterVehicle(ped, vehicle, 20000, 1, 1.0, 3, 0)
+    Wait(4000)
+    TaskEnterVehicle(ped2, vehicle, 20000, 2, 1.0, 3, 0)
+    Wait(4000)
+    TaskEnterVehicle(ped3, vehicle, 20000, 3, 1.0, 3, 0)
+    Wait(4000)
+    TaskEnterVehicle(ped4, vehicle, 20000, 4, 1.0, 3, 0)
+    Wait(4000)
+    TaskEnterVehicle(ped5, vehicle, 20000, 5, 1.0, 3, 0)
+    Wait(4000)
+    FreezeEntityPosition(vehicle, false)
+    -----------------------------------------------------------------------------------
     Blip = AddBlipForCoord(Config.StartPoint.x, Config.StartPoint.y, Config.StartPoint.z)
     SetBlipColour(Blip, 2)
     SetBlipRoute(Blip, true)
     inJob = true
     ShowNotification("<C>[~b~Mission~s~]\nRejoignez le point GPS, bonne route")
+    -----------------------------------------------------------------------------------
 end
 
 Citizen.CreateThread(function()
@@ -96,56 +129,10 @@ function menuActions()
                     Config.Planes[i].price .. "$" }, true,
                     function(Hovered, Active, Selected)
                         if Selected then
-
+                            LabelVeh = Config.Planes[i].label
                             ESX.TriggerServerCallback('exyPlaneMission:CheckMoney', function(hasMoney)
                                 if hasMoney then
-                                    local model = GetHashKey(Config.Planes[i].model)
-                                    RequestModel(model)
-                                    while not HasModelLoaded(model) do Wait(0) end
-
-                                    vehicle = CreateVehicle(model, Config.SpawnPoint.x, Config.SpawnPoint.y,
-                                        Config.SpawnPoint.z, Config.SpawnPoint.h, true, false)
-
-                                    TaskEnterVehicle(GetPlayerPed(-1), vehicle, 20000, -1, 1.0, 3, 0)
-                                    SetVehicleDirtLevel(vehicle, 0.0)
-                                    FreezeEntityPosition(vehicle, true)
-                                    ShowNotification("<C>Attendez que tout les passagers embarquent")
-                                    RageUI.CloseAll()
-
-                                    Wait(4000)
-
-
-                                    RequestModel(GetHashKey("s_m_y_dealer_01"))
-                                    while (not HasModelLoaded(GetHashKey("s_m_y_dealer_01"))) do
-                                        Citizen.Wait(1)
-                                    end
-
-                                    ped = CreatePed(4, 0xE497BBEF, -987.18878173828, -3005.7377929688, 13.945065498352,
-                                        330.73, true)
-                                    ped2 = CreatePed(4, 0xE497BBEF, -987.18878173828, -3005.7377929688, 13.945065498352,
-                                        330.73, true)
-                                    ped3 = CreatePed(4, 0xE497BBEF, -987.18878173828, -3005.7377929688, 13.945065498352,
-                                        330.73, true)
-                                    ped4 = CreatePed(4, 0xE497BBEF, -987.18878173828, -3005.7377929688, 13.945065498352,
-                                        330.73, true)
-                                    ped5 = CreatePed(4, 0xE497BBEF, -987.18878173828, -3005.7377929688, 13.945065498352,
-                                        330.73, true)
-
-                                    Wait(4000)
-                                    TaskEnterVehicle(ped, vehicle, 20000, 1, 1.0, 3, 0)
-                                    Wait(4000)
-                                    TaskEnterVehicle(ped2, vehicle, 20000, 2, 1.0, 3, 0)
-                                    Wait(4000)
-                                    TaskEnterVehicle(ped3, vehicle, 20000, 3, 1.0, 3, 0)
-                                    Wait(4000)
-                                    TaskEnterVehicle(ped4, vehicle, 20000, 4, 1.0, 3, 0)
-                                    Wait(4000)
-                                    TaskEnterVehicle(ped5, vehicle, 20000, 5, 1.0, 3, 0)
-                                    Wait(4000)
-
-                                    StartBliper()
-                                    FreezeEntityPosition(vehicle, false)
-
+                                    StartBliper(LabelVeh)
                                     RageUI.CloseAll()
                                 else
                                     ShowNotification("Vous n'avez pas assez d'argent")
